@@ -116,8 +116,10 @@ def main():
     rows = []
     for ctrl_name in args.controllers:
         print(f"[+] controller: {ctrl_name}")
-        ctrl = load_controller(ctrl_name, trace, args.model_coeffs)
         for run in range(args.runs):
+            # instantiate a fresh controller for each run so that internal state
+            # from previous simulations does not leak across repetitions
+            ctrl = load_controller(ctrl_name, trace, args.model_coeffs)
             sim  = Cluster(trace, ctrl)
             summ = sim.run()
             summ.update(controller=ctrl_name, run=run)
